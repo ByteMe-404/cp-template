@@ -1,0 +1,18 @@
+#include <stdio.h>
+#define int long long
+#define pi(x) printf("%d\n",x);
+#define si(x) scanf("%d",&x);
+#define ps(x) printf("%s\n",x);
+#define input(i,end,arr)  for(int i = 0; i<end ; i++){si(arr[i]);}
+#define fol(i,end)  for(int i = 0; i<end ; i++)
+#define swapn(a, b) {int temp = a;a = b;b = temp;} 
+#define dbg(x) printf("DEBUG: %s = %d\n", #x, x) 
+
+
+
+int main(){
+
+
+
+return 0;
+}
