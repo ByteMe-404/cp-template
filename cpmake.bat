@@ -1,5 +1,14 @@
 @echo off
 
+:: Check if the folder name is provided
+if "%~1"=="" (
+    echo Error: Please provide a folder name.
+    exit /b
+)
+
+:: Set the folder name from the command-line argument
+set FOLDER_NAME=%~1
+
 :: Set the full path to the boiler.txt file
 set BOILER_FILE=C:\Users\rian64bit\boicpp.txt
 
@@ -9,11 +18,11 @@ if not exist "%BOILER_FILE%" (
     exit /b
 )
 
-:: Create the main folder CP_File
-mkdir CP_File
+:: Create the main folder with the provided name
+mkdir "%FOLDER_NAME%"
 
-:: Change to the CP_File folder
-cd CP_File
+:: Change to the main folder
+cd "%FOLDER_NAME%"
 
 :: Create the 6 subfolders (a, b, c, d, e, f)
 for %%F in (a b c d e f) do (
@@ -40,7 +49,7 @@ for %%F in (a b c d e f) do (
     type nul > output.txt
     type nul > error.txt
 
-    :: Go back to the parent CP_File folder
+    :: Go back to the parent folder
     cd ..
 )
 
