@@ -1,39 +1,329 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long ll;
-typedef unsigned long long ull;
-typedef long double ld;
+const int N = 200005;
+const long long INF = 1e18;
 
-const ll MOD = 1e9 + 7;
-const ll INF = 1e18;
+vector<pair<int,int>> g[N];   // weighted graph
+vector<int> adj[N];           // unweighted graph
 
-#define fast_io ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
-#define pb push_back
-#define mp make_pair
-#define all(v) v.begin(), v.end()
-#define rall(v) v.rbegin(), v.rend()
-#define sz(v) (int)(v.size())
-#define endl '\n'
+bool vis[N];
+int dist1[N];
+long long dist2[N];
+int color[N], parent[N];
+int sz[N];
 
-#ifdef LOCAL
-    #define debug(x) cerr << #x << " = " << x << endl
-#else
-    #define debug(x)
-#endif
+//////////////////////////////////////////////////
+// Initialize DSU
+//////////////////////////////////////////////////
+void make(int n){
+    for(int i = 1; i <= n; i++){
+        parent[i] = i;
+        sz[i] = 1;
+    }
+}
 
-ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
-ll lcm(ll a, ll b) { return (a / gcd(a, b)) * b; }
-ll mod_add(ll a, ll b, ll m = MOD) { return (a % m + b % m) % m; }
-ll mod_sub(ll a, ll b, ll m = MOD) { return (a % m - b % m + m) % m; }
-ll mod_mul(ll a, ll b, ll m = MOD) { return (a % m * b % m) % m; }
-ll mod_exp(ll a, ll b, ll m = MOD) {
-    ll res = 1;
+//////////////////////////////////////////////////
+// Find Parent (Path Compression)
+//////////////////////////////////////////////////
+int find(int v){
+    if(parent[v] == v)
+        return v;
+    return parent[v] = find(parent[v]);
+}
+
+//////////////////////////////////////////////////
+// Union by Size
+//////////////////////////////////////////////////
+bool unite(int a, int b){
+    a = find(a);
+    b = find(b);
+
+    if(a == b)
+        return false;
+
+    if(sz[a] < sz[b])
+        swap(a, b);
+
+    parent[b] = a;
+    sz[a] += sz[b];
+
+    return true;
+}
+
+
+
+
+//////////////////////////////////////////////////////////
+// DFS
+//////////////////////////////////////////////////////////
+void dfs(int u){
+    vis[u]=1;
+    for(int v:adj[u])
+        if(!vis[v]) dfs(v);
+}
+
+//////////////////////////////////////////////////////////
+// BFS (Unweighted Shortest Path)
+//////////////////////////////////////////////////////////
+void bfs(int src){
+    memset(dist1,-1,sizeof(dist1));
+    queue<int> q;
+    q.push(src);
+    dist1[src]=0;
+
+    while(!q.empty()){
+        int u=q.front(); q.pop();
+        for(int v:adj[u]){
+            if(dist1[v]==-1){
+                dist1[v]=dist1[u]+1;
+                q.push(v);
+            }
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////
+// Multi Source BFS
+//////////////////////////////////////////////////////////
+void multi_bfs(vector<int> src){
+    memset(dist1,-1,sizeof(dist1));
+    queue<int> q;
+
+    for(int s:src){
+        dist1[s]=0;
+        q.push(s);
+    }
+
+    while(!q.empty()){
+        int u=q.front(); q.pop();
+        for(int v:adj[u]){
+            if(dist1[v]==-1){
+                dist1[v]=dist1[u]+1;
+                q.push(v);
+            }
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////
+// Dijkstra
+//////////////////////////////////////////////////////////
+void dijkstra(int src,int n){
+    for(int i=1;i<=n;i++) dist2[i]=INF;
+
+    priority_queue<pair<long long,int>,
+    vector<pair<long long,int>>,
+    greater<pair<long long,int>>> pq;
+
+    dist2[src]=0;
+    pq.push({0,src});
+
+    while(!pq.empty()){
+        auto [d,u]=pq.top();
+        pq.pop();
+
+        if(d!=dist2[u]) continue;
+
+        for(auto [v,w]:g[u]){
+            if(dist2[v]>d+w){
+                dist2[v]=d+w;
+                pq.push({dist2[v],v});
+            }
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////
+// 0-1 BFS
+//////////////////////////////////////////////////////////
+void zero_one_bfs(int src,int n){
+    for(int i=1;i<=n;i++) dist2[i]=INF;
+
+    deque<int> dq;
+    dq.push_front(src);
+    dist2[src]=0;
+
+    while(!dq.empty()){
+        int u=dq.front();
+        dq.pop_front();
+
+        for(auto [v,w]:g[u]){
+            if(dist2[v]>dist2[u]+w){
+                dist2[v]=dist2[u]+w;
+                if(w==0) dq.push_front(v);
+                else dq.push_back(v);
+            }
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////
+// Bipartite Check
+//////////////////////////////////////////////////////////
+bool bipartite(int src){
+    queue<int> q;
+    q.push(src);
+    color[src]=0;
+
+    while(!q.empty()){
+        int u=q.front();
+        q.pop();
+
+        for(int v:adj[u]){
+            if(color[v]==-1){
+                color[v]=color[u]^1;
+                q.push(v);
+            }
+            else if(color[v]==color[u])
+                return false;
+        }
+    }
+    return true;
+}
+
+//////////////////////////////////////////////////////////
+// Cycle Detection (Undirected)
+//////////////////////////////////////////////////////////
+bool cycleUndirected(int u,int p){
+    vis[u]=1;
+
+    for(int v:adj[u]){
+        if(!vis[v]){
+            if(cycleUndirected(v,u))
+                return true;
+        }
+        else if(v!=p)
+            return true;
+    }
+    return false;
+}
+
+//////////////////////////////////////////////////////////
+// Cycle Detection (Directed)
+//////////////////////////////////////////////////////////
+int state[N]; //0=unvisited,1=visiting,2=done
+
+bool cycleDirected(int u){
+    state[u]=1;
+
+    for(int v:adj[u]){
+        if(state[v]==0){
+            if(cycleDirected(v))
+                return true;
+        }
+        else if(state[v]==1)
+            return true;
+    }
+
+    state[u]=2;
+    return false;
+}
+
+//////////////////////////////////////////////////////////
+// Connected Components
+//////////////////////////////////////////////////////////
+int components(int n){
+    memset(vis,0,sizeof(vis));
+    int cnt=0;
+
+    for(int i=1;i<=n;i++){
+        if(!vis[i]){
+            dfs(i);
+            cnt++;
+        }
+    }
+    return cnt;
+}
+
+//////////////////////////////////////////////////////////
+// Bellman Ford
+//////////////////////////////////////////////////////////
+struct Edge{
+    int u,v,w;
+};
+
+vector<Edge> edges;
+
+bool bellmanFord(int src,int n){
+    for(int i=1;i<=n;i++) dist2[i]=INF;
+    dist2[src]=0;
+
+    for(int i=1;i<n;i++){
+        for(auto e:edges){
+            if(dist2[e.u]!=INF &&
+               dist2[e.v]>dist2[e.u]+e.w)
+                dist2[e.v]=dist2[e.u]+e.w;
+        }
+    }
+
+    for(auto e:edges){
+        if(dist2[e.u]!=INF &&
+           dist2[e.v]>dist2[e.u]+e.w)
+            return false; // Negative Cycle
+    }
+    return true;
+}
+
+//////////////////////////////////////////////////////////
+// Floyd Warshall
+//////////////////////////////////////////////////////////
+long long fw[505][505];
+
+void floyd(int n){
+    for(int k=1;k<=n;k++)
+        for(int i=1;i<=n;i++)
+            for(int j=1;j<=n;j++)
+                fw[i][j]=min(fw[i][j],fw[i][k]+fw[k][j]);
+}
+
+//////////////////////////////////////////////////////////
+
+
+string multiply(string num1, string num2) {
+    if (num1 == "0" || num2 == "0")
+        return "0";
+
+    int n = num1.size();
+    int m = num2.size();
+
+    vector<int> result(n + m, 0);
+
+    for (int i = n - 1; i >= 0; i--) {
+        for (int j = m - 1; j >= 0; j--) {
+            int mul = (num1[i] - '0') * (num2[j] - '0');
+            int sum = mul + result[i + j + 1];
+
+            result[i + j + 1] = sum % 10;
+            result[i + j] += sum / 10;
+        }
+    }
+
+    string ans;
+    int i = 0;
+    while (i < result.size() && result[i] == 0)
+        i++;
+
+    while (i < result.size())
+        ans.push_back(result[i++] + '0');
+
+    return ans.empty() ? "0" : ans;
+}
+
+
+
+
+long long binpow(long long a, long long b, long long mod) {
+    a %= mod;
+    long long res = 1;
+
     while (b > 0) {
-        if (b & 1) res = mod_mul(res, a, m);
-        a = mod_mul(a, a, m);
+        if (b & 1)
+            res = (res * a) % mod;
+        a = (a * a) % mod;
         b >>= 1;
     }
+
     return res;
 }
 
@@ -43,33 +333,24 @@ ll mod_exp(ll a, ll b, ll m = MOD) {
 
 
 
-void solve() {
-    // Write your solution here
-    int n;
-    cin >> n;
-    vector<int> arr(n);
-    for (int &x : arr) cin >> x;
-
-}
 
 
 
-int main() {
-    fast_io;
 
-    #ifdef LOCAL
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
 
-    int t = 1; // Change to `cin >> t` if multiple test cases
-    int i = 1;
-    //cin>>t;
-    while (t--) {
-        cout<<"case #"<<i<<" :";
-        solve();
-        i++;
-    }
+
+
+
+
+
+
+
+
+
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
     return 0;
 }
