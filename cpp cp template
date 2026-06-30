@@ -332,6 +332,21 @@ long long binpow(long long a, long long b, long long mod) {
 
 
 
+int spf[N + 1];
+
+void sieve() {
+    for (int i = 0; i <= N; i++)
+        spf[i] = i;
+
+    for (int i = 2; i * i <= N; i++) {
+        if (spf[i] == i) { // i is prime
+            for (int j = i * i; j <= N; j += i) {
+                if (spf[j] == j)
+                    spf[j] = i;
+            }
+        }
+    }
+}
 
 
 
@@ -339,6 +354,39 @@ long long binpow(long long a, long long b, long long mod) {
 
 
 
+vector<pair<int,int>> factorize(int n) {
+    vector<pair<int,int>> factors;
+
+    while (n > 1) {
+        int p = spf[n];
+        int cnt = 0;
+
+        while (n % p == 0) {
+            n /= p;
+            cnt++;
+        }
+
+        factors.push_back({p, cnt});
+    }
+
+    return factors;
+}
+
+
+
+
+vector<bool> isPrime(N + 1, true);
+
+void sieve() {
+    isPrime[0] = isPrime[1] = false;
+
+    for (int i = 2; i * i <= N; i++) {
+        if (isPrime[i]) {
+            for (int j = i * i; j <= N; j += i)
+                isPrime[j] = false;
+        }
+    }
+}
 
 
 
