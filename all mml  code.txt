@@ -1,0 +1,618 @@
+
+;1enter two digit and get sum 
+
+.model small
+.stack 100h
+
+.data 
+msg1 db 'the sum of $ '
+msg2 db ' And $ '
+msg3 db ' is $'
+
+.code
+
+main proc
+
+    mov ax,@data
+    mov ds,ax
+
+    mov ah,2
+    mov dl,'?'
+    int 21h
+    
+    
+    mov ah,1
+    int 21h
+    mov bh,al
+    
+    mov ah,1
+    int 21h
+    mov bl,al
+    
+    
+    sub bh,'0'
+    sub bl,'0'
+    
+    mov al,bl
+    add al,bh
+    add al,'0'
+    
+    mov cl,al  
+    
+    lea dx,msg1
+    mov ah,9h
+    int 21h 
+    
+    mov ah,2
+    mov dl,bl
+    add dl,'0'
+    int 21h 
+    
+    lea dx,msg2
+    mov ah,9h
+    int 21h
+    
+     mov ah,2
+    mov dl,bh
+    add dl,'0'
+    int 21h 
+    
+    lea dx,msg3
+    mov ah,9h
+    int 21h
+    
+    mov ah,2
+    mov dl,cl
+    int 21h
+    
+    
+    
+    
+    
+
+exit:
+    mov ah,4ch
+    int 21h
+    
+    
+ main endp
+end main
+
+
+
+
+;2 taking  three initialss 
+
+.model small
+.stack 100h
+
+.data 
+msg db 'enter three inititals $'   
+nl db 13,10,'$'
+
+.code
+
+main proc
+
+    mov ax,@data
+    mov ds,ax
+
+ 
+ 
+    lea dx, msg 
+    mov ah,09
+    int 21h
+ 
+    mov ah,1
+    int 21h 
+    mov bl,al
+    
+    mov ah,1
+    int 21h
+    mov bh,al
+    
+    mov ah,1
+    int 21h 
+    mov cl,al
+    
+    
+    lea dx, nl 
+    mov ah,09
+    int 21h
+    
+    mov ah,2
+    mov dl,bl
+    int 21h
+    
+    
+    lea dx, nl 
+    mov ah,09
+    int 21h
+    
+    mov ah,2
+    mov dl,bh
+    int 21h
+    
+    lea dx, nl 
+    mov ah,09
+    int 21h
+    
+    
+    mov ah,2
+    mov dl,cl
+    int 21h  
+  
+ 
+       
+    
+     
+    mov ah,2
+    mov dl , 13
+    int 21h
+    mov dl,10
+    int 21h
+   
+        
+    
+
+exit:
+    mov ah,4ch
+    int 21h
+    
+    
+ main endp
+end main
+
+
+
+
+
+
+
+
+
+;A - F achii
+.model small
+.stack 100h
+
+.data
+msg db 'ENTER A HEX DIGIT: $'
+nl db 13,10,'IN DECIMAL IT IS $'
+
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+
+    ; Display prompt
+    lea dx, msg
+    mov ah, 09h
+    int 21h
+
+    ; Read hex digit
+    mov ah, 01h
+    int 21h
+    sub al, 37h
+    mov cl, al
+
+    ; Display message on next line
+    lea dx, nl
+    mov ah, 09h
+    int 21h
+
+    ; Display tens digit
+    mov ah, 02h
+    mov dl, '1'
+    int 21h
+
+    ; Display ones digit
+    mov dl, cl
+    sub dl, 10
+    add dl, 30h
+    mov ah, 02h
+    int 21h
+
+    ; Exit
+    mov ah, 4ch
+    int 21h
+
+main endp
+end main
+
+
+
+
+
+
+
+
+
+;4-- 10 startt print 10 line
+.model small
+.stack 100h
+
+.data
+box db '**********',13,10
+    db '**********',13,10
+    db '**********',13,10
+    db '**********',13,10
+    db '**********',13,10
+    db '**********',13,10
+    db '**********',13,10
+    db '**********',13,10
+    db '**********',13,10
+    db '**********','$'
+
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+
+    lea dx, box
+    mov ah, 09h
+    int 21h
+
+    mov ah, 4ch
+    int 21h
+
+main endp
+end main
+
+
+
+
+
+
+
+
+
+
+
+;5--- 10 startt print 10 line
+.model small
+.stack 100h
+
+.data
+box db '***********',13,10
+    db '***********',13,10
+    db '***********',13,10
+    db '***********',13,10
+    db '***********',13,10
+    db '***********',13,10,'$'
+                             
+                             
+ part1 db '****$'     
+ nl db 13,10,'$'
+.code
+main proc
+    mov ax, @data
+    mov ds, ax         
+    
+    mov ah,1
+    int 21h
+    mov bl,al
+    
+    
+    mov ah,1
+    int 21h
+    mov bh,al
+    
+    mov ah,1
+    int 21h
+    mov cl,al
+    
+ 
+    lea dx,nl
+    mov ah,9
+    int 21h
+    
+    
+
+    lea dx, box
+    mov ah, 09h
+    int 21h       
+    
+    lea dx,part1
+    mov ah,9
+    int 21h  
+    
+    mov ah,2
+    mov dl,bl
+    int 21h
+    mov ah,2
+    mov dl,bh
+    int 21h
+    mov ah,2
+    mov dl,cl
+    int 21h
+    
+    
+    lea dx,part1
+    mov ah,9
+    int 21h
+             
+    lea dx,nl
+    mov ah,9
+    int 21h
+    
+    
+    
+    lea dx,box
+    mov ah,9
+    int 21h
+                        
+                        
+                        
+ 
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+    mov ah, 4ch
+    int 21h
+
+main endp
+end main
+
+
+
+
+
+
+
+
+
+
+
+
+; Display two capital letters in alphabetical order
+
+.model small
+.stack 100h
+
+.data
+nl db 13,10,'$'
+
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+
+    ; Display ?
+    mov ah, 2
+    mov dl, '?'
+    int 21h
+
+    ; Read first letter
+    mov ah, 1
+    int 21h
+    mov bl, al
+
+    ; Read second letter
+    mov ah, 1
+    int 21h
+    mov bh, al
+
+    ; Compare letters
+    cmp bl, bh
+    jle smaller
+
+    ; First letter is greater, display second first
+    mov ah, 2
+    mov dl, bh
+    int 21h
+
+    mov dl, bl
+    int 21h
+
+    jmp exit
+
+smaller:
+    ; First letter is smaller or equal
+    mov ah, 2
+    mov dl, bl
+    int 21h
+
+    mov dl, bh
+    int 21h
+
+exit:
+    mov ah, 4ch
+    int 21h
+
+main endp
+end main
+    
+
+
+
+
+
+
+
+
+
+
+
+;print 80h to ffh
+.model small
+.stack 100h
+
+.data
+nl db 13,10,'$'
+
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+
+    mov cx, 128
+    mov bl, 80h
+    mov bh, 0
+
+again:
+    mov dl, bl
+    mov ah, 02h
+    int 21h
+
+
+    mov dl, ' '
+    mov ah, 02h
+    int 21h
+
+    inc bl
+    inc bh
+
+    cmp bh, 10
+    jne skip
+
+    lea dx, nl
+    mov ah, 09h
+    int 21h
+    mov bh, 0
+
+skip:
+    loop again
+
+    mov ah, 4ch
+    int 21h
+
+main endp
+end main
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.model small
+.stack 100h
+
+.data
+msg  db 'ENTER A HEX DIGIT (0-F): $'
+msg2 db 13,10,'IN DECIMAL IT IS $'
+msg3 db 13,10,'DO YOU WANT TO TRY AGAIN (Y/N)? $'
+msg4 db 13,10,'INVALID INPUT. TRY AGAIN.',13,10,'$'
+
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+
+input:
+    ; Display prompt
+    lea dx, msg
+    mov ah, 09h
+    int 21h
+
+    ; Read character
+    mov ah, 01h
+    int 21h
+
+    ; Check 0-9
+    cmp al, '0'
+    jb invalid
+    cmp al, '9'
+    jbe digit
+
+    ; Check A-F
+    cmp al, 'A'
+    jb invalid
+    cmp al, 'F'
+    ja invalid
+
+    ; Convert A-F to 10-15
+    sub al, 37h
+    jmp display
+
+digit:
+    ; Convert 0-9 to numeric value
+    mov dl, al
+    mov ah, 02h
+    int 21h
+
+    ; Ask whether to repeat
+    lea dx, msg3
+    mov ah, 09h
+    int 21h
+
+    mov ah, 01h
+    int 21h
+
+    cmp al, 'y'
+    je input
+    cmp al, 'Y'
+    je input
+
+    jmp exit                     
+    
+    
+
+display:
+    mov bl, al
+
+    ; Display decimal message
+    lea dx, msg2
+    mov ah, 09h
+    int 21h
+
+    ; If value >= 10, display tens digit
+
+    mov ah, 02h
+    mov dl, '1'
+    int 21h
+
+    sub bl, 10  
+        mov dl, bl
+    add dl, 30h
+    mov ah, 02h
+    int 21h
+
+    ; Ask whether to repeat
+    lea dx, msg3
+    mov ah, 09h
+    int 21h
+
+    mov ah, 01h
+    int 21h
+
+    cmp al, 'y'
+    je input
+    cmp al, 'Y'
+    je input
+
+    jmp exit  
+
+
+
+invalid:
+    lea dx, msg4
+    mov ah, 09h
+    int 21h
+    jmp input
+
+exit:
+    mov ah, 4Ch
+    int 21h
+
+main endp
+end main
+
+
+
+
+	
