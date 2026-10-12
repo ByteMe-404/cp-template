@@ -1,4 +1,11 @@
 
+
+mongodb+srv://rianofficial444_db_user:<db_password>@cluster0.4l2wg2k.mongodb.net/?appName=Cluster0
+
+
+
+
+
 ;1enter two digit and get sum 
 
 .model small
